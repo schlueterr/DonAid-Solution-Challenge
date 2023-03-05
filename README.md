@@ -1,4 +1,4 @@
-# flutter_application_1
+# This project is for the Google Solution Challenge 2023
 
 A new Flutter project.
 
