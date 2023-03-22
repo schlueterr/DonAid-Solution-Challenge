@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/home_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -13,6 +14,7 @@ class MyApp extends StatelessWidget {
     return const MaterialApp(
       title: 'DonAid',
       home: LoginScreen(),
+      //home: HomeScreen(),
     );
   }
 }
@@ -103,30 +105,39 @@ class _LoginScreenState extends State<LoginScreen> {
       height: 64,
       width: double.infinity,
       child: ElevatedButton(
-        style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all(
-            Colors.white,
-          ),
-          elevation: MaterialStateProperty.all(6),
-          shape: MaterialStateProperty.all(
-            const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(10),
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(
+              Colors.white,
+            ),
+            elevation: MaterialStateProperty.all(6),
+            shape: MaterialStateProperty.all(
+              const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10),
+                ),
               ),
             ),
           ),
-        ),
-        child: const Text(
-          'Login',
-          style: TextStyle(
-            fontFamily: 'PT-Sans',
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
+          child: const Text(
+            'Login',
+            style: TextStyle(
+              fontFamily: 'PT-Sans',
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
           ),
-        ),
-        onPressed: () {},
-      ),
+          onPressed: () {
+            //if (_formKey.currentState.validate()) {
+            // TODO: perform login validation
+            // If login is successful, navigate to the home screen
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => HomeScreen()),
+            );
+          }
+          // },
+          ),
     );
   }
 
