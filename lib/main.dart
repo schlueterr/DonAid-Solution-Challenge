@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/home_screen.dart';
 import 'package:flutter_application_1/new_homescreen.dart';
-
+import './post.dart';
 void main() {
   runApp(MyApp());
 }
@@ -152,6 +152,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return FloatingActionButton(
       backgroundColor: Colors.white,
       onPressed: onPressed,
+      heroTag: null,//nestor added this to remove error that would pop up.
       child: SizedBox(
         height: 30,
         child: Image.asset(image),

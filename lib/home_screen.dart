@@ -14,8 +14,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
 
   final List<Widget> _screens = [
-    NewHomeScreen(),
-    PostScreen(),
+    HomePage(),
     AccountScreen(),
   ];
 
@@ -24,10 +23,10 @@ class _HomeScreenState extends State<HomeScreen> {
       icon: Icon(Icons.home),
       label: 'Home',
     ),
-    BottomNavigationBarItem(
-      icon: Icon(Icons.add_box),
-      label: 'Post',
-    ),
+    // BottomNavigationBarItem(
+    //   icon: Icon(Icons.add_box),
+    //   label: 'Post',
+    // ),
     BottomNavigationBarItem(
       icon: Icon(Icons.person),
       label: 'Account',
@@ -36,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final screenNames = ['Home', 'Post', 'Account'];
+    final screenNames = ['Home','Account'];
     return Scaffold(
       appBar: AppBar(
         title: Text(screenNames[_currentIndex]),
