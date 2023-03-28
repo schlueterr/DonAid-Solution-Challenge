@@ -3,339 +3,498 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/home_screen.dart';
 import 'package:flutter_application_1/new_homescreen.dart';
 import './post.dart';
-void main() {
+import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final keyApplicationId = 'pFwKttmatex3dmiISGFWwrvun2Dw6sYI9v9peWCs';
+  final keyClientKey = '8rF5cGuTcEHJQ0etAk6B5JO23UoO1k5XeTlleacy';
+  final keyParseServerUrl = 'https://parseapi.back4app.com';
+
+  await Parse().initialize(keyApplicationId, keyParseServerUrl,
+      clientKey: keyClientKey, debug: true);
+
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  Future<bool> hasUserLogged() async {
+    ParseUser? currentUser = await ParseUser.currentUser() as ParseUser?;
+    if (currentUser == null) {
+      return false;
+    }
+    //Checks whether the user's session token is valid
+    final ParseResponse? parseResponse =
+        await ParseUser.getCurrentUserFromServer(currentUser.sessionToken!);
+
+    if (parseResponse?.success == null || !parseResponse!.success) {
+      //Invalid session. Logout
+      await currentUser.logout();
+      return false;
+    } else {
+      return true;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'DonAid',
-      home: LoginScreen(),
-      routes: {
-        '/home': (context) => HomeScreen(),
-        //'/signup': (context) => const SignUpScreen(),
-      },
+      title: 'Flutter - Parse Server',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
+      home: FutureBuilder<bool>(
+          future: hasUserLogged(),
+          builder: (context, snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.none:
+              case ConnectionState.waiting:
+                return Scaffold(
+                  body: Center(
+                    child: Container(
+                        width: 100,
+                        height: 100,
+                        child: CircularProgressIndicator()),
+                  ),
+                );
+              default:
+                if (snapshot.hasData && snapshot.data!) {
+                  return UserPage();
+                } else {
+                  return LoginPage();
+                }
+            }
+          }),
     );
   }
 }
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+class LoginPage extends StatefulWidget {
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final controllerUsername = TextEditingController();
+  final controllerPassword = TextEditingController();
+  bool isLoggedIn = false;
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text('Flutter - Parse Server'),
+        ),
+        body: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Container(
+                  height: 200,
+                  child: Image.network(
+                      'https://blog.back4app.com/wp-content/uploads/2017/11/logo-b4a-1-768x175-1.png'),
+                ),
+                Center(
+                  child: const Text('Flutter on Back4App',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+                TextField(
+                  controller: controllerUsername,
+                  enabled: !isLoggedIn,
+                  keyboardType: TextInputType.text,
+                  textCapitalization: TextCapitalization.none,
+                  autocorrect: false,
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black)),
+                      labelText: 'Username'),
+                ),
+                SizedBox(
+                  height: 8,
+                ),
+                TextField(
+                  controller: controllerPassword,
+                  enabled: !isLoggedIn,
+                  obscureText: true,
+                  keyboardType: TextInputType.text,
+                  textCapitalization: TextCapitalization.none,
+                  autocorrect: false,
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black)),
+                      labelText: 'Password'),
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+                Container(
+                  height: 50,
+                  child: ElevatedButton(
+                    child: const Text('Login'),
+                    onPressed: isLoggedIn ? null : () => doUserLogin(),
+                  ),
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+                Container(
+                  height: 50,
+                  child: ElevatedButton(
+                    child: const Text('Sign Up'),
+                    onPressed: () => navigateToSignUp(),
+                  ),
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+                Container(
+                  height: 50,
+                  child: ElevatedButton(
+                    child: const Text('Reset Password'),
+                    onPressed: () => navigateToResetPassword(),
+                  ),
+                )
+              ],
+            ),
+          ),
+        ));
+  }
+
+  void doUserLogin() async {
+    final username = controllerUsername.text.trim();
+    final password = controllerPassword.text.trim();
+
+    final user = ParseUser(username, password, null);
+
+    var response = await user.login();
+
+    if (response.success) {
+      navigateToUser();
+    } else {
+      Message.showError(context: context, message: response.error!.message);
+    }
+  }
+
+  void navigateToUser() {
+    Navigator.pushAndRemoveUntil(
+      context,
+      // MaterialPageRoute(builder: (context) => UserPage()),
+      MaterialPageRoute(builder: (context) => HomeScreen()),
+      (Route<dynamic> route) => false,
+    );
+  }
+
+  void navigateToSignUp() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => SignUpPage()),
+    );
+  }
+
+  void navigateToResetPassword() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ResetPasswordPage()),
+    );
+  }
 }
 
-class _LoginScreenState extends State<LoginScreen> {
-  bool? isChecked = false;
+class SignUpPage extends StatefulWidget {
+  @override
+  _SignUpPageState createState() => _SignUpPageState();
+}
 
-  Widget _buildTextField({
-    required bool obscureText,
-    Widget? prefixedIcon,
-    String? hintText,
-  }) {
-    return Material(
-      color: Colors.transparent,
-      elevation: 2,
-      child: TextField(
-        cursorColor: Colors.white,
-        cursorWidth: 2,
-        obscureText: obscureText,
-        style: const TextStyle(color: Colors.white),
-        decoration: InputDecoration(
-          border: InputBorder.none,
-          filled: true,
-          fillColor: const Color(0xFFF99E1E),
-          prefixIcon: prefixedIcon,
-          hintText: hintText,
-          hintStyle: const TextStyle(
-            color: Colors.white54,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'PTSans',
-          ),
-        ),
-      ),
-    );
-  }
+class _SignUpPageState extends State<SignUpPage> {
+  final controllerUsername = TextEditingController();
+  final controllerPassword = TextEditingController();
+  final controllerEmail = TextEditingController();
 
-  Widget _buildForgotPasswordButton() {
-    return Container(
-      alignment: Alignment.centerRight,
-      child: TextButton(
-        child: const Text(
-          'Forgot Password?',
-          style: TextStyle(
-            fontFamily: 'PT-Sans',
-            fontSize: 14,
-            color: Colors.white,
-          ),
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text('Flutter Sign Up'),
         ),
-        onPressed: () {},
-      ),
-    );
-  }
-
-  Widget _buildRemeberMe() {
-    return Row(
-      children: [
-        Checkbox(
-          value: isChecked,
-          onChanged: (value) {
-            setState(() {
-              isChecked = value;
-            });
-          },
-          checkColor: Colors.blue,
-          fillColor: MaterialStateProperty.all(Colors.white),
-        ),
-        const Text(
-          'Remember me',
-          style: TextStyle(
-            fontFamily: 'PT-Sans',
-            fontSize: 14,
-            color: Colors.white,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildLoginButton() {
-    return SizedBox(
-      height: 64,
-      width: double.infinity,
-      child: ElevatedButton(
-          style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all(
-              Colors.white,
-            ),
-            elevation: MaterialStateProperty.all(6),
-            shape: MaterialStateProperty.all(
-              const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(10),
+        body: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Container(
+                  height: 200,
+                  child: Image.network(
+                      'https://blog.back4app.com/wp-content/uploads/2017/11/logo-b4a-1-768x175-1.png'),
                 ),
-              ),
+                Center(
+                  child: const Text('Flutter on Back4App',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+                Center(
+                  child: const Text('User registration',
+                      style: TextStyle(fontSize: 16)),
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+                TextField(
+                  controller: controllerUsername,
+                  keyboardType: TextInputType.text,
+                  textCapitalization: TextCapitalization.none,
+                  autocorrect: false,
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black)),
+                      labelText: 'Username'),
+                ),
+                SizedBox(
+                  height: 8,
+                ),
+                TextField(
+                  controller: controllerEmail,
+                  keyboardType: TextInputType.emailAddress,
+                  textCapitalization: TextCapitalization.none,
+                  autocorrect: false,
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black)),
+                      labelText: 'E-mail'),
+                ),
+                SizedBox(
+                  height: 8,
+                ),
+                TextField(
+                  controller: controllerPassword,
+                  obscureText: true,
+                  keyboardType: TextInputType.text,
+                  textCapitalization: TextCapitalization.none,
+                  autocorrect: false,
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black)),
+                      labelText: 'Password'),
+                ),
+                SizedBox(
+                  height: 8,
+                ),
+                Container(
+                  height: 50,
+                  child: ElevatedButton(
+                    child: const Text('Sign Up'),
+                    onPressed: () => doUserRegistration(),
+                  ),
+                )
+              ],
             ),
           ),
-          child: const Text(
-            'Login',
-            style: TextStyle(
-              fontFamily: 'PT-Sans',
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
-          ),
-          onPressed: () {
-            //if (_formKey.currentState.validate()) {
-            // TODO: perform login validation
-            // If login is successful, navigate to the home screen
-            Navigator.pushReplacement(
+        ));
+  }
+
+  void doUserRegistration() async {
+    final username = controllerUsername.text.trim();
+    final email = controllerEmail.text.trim();
+    final password = controllerPassword.text.trim();
+
+    final user = ParseUser.createUser(username, password, email);
+
+    var response = await user.signUp();
+
+    if (response.success) {
+      Message.showSuccess(
+          context: context,
+          message: 'User was successfully created!',
+          onPressed: () async {
+            Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(builder: (context) => HomeScreen()),
+              MaterialPageRoute(builder: (context) => UserPage()),
+              (Route<dynamic> route) => false,
             );
-          }
-          // },
-          ),
-    );
+          });
+    } else {
+      Message.showError(context: context, message: response.error!.message);
+    }
   }
+}
 
-  Widget _buildLogoButton({
-    required String image,
-    required VoidCallback onPressed,
-  }) {
-    return FloatingActionButton(
-      backgroundColor: Colors.white,
-      onPressed: onPressed,
-      heroTag: null,//nestor added this to remove error that would pop up.
-      child: SizedBox(
-        height: 30,
-        child: Image.asset(image),
-      ),
-    );
-  }
+class UserPage extends StatelessWidget {
+  ParseUser? currentUser;
 
-  Widget _buildSocialButtons() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        _buildLogoButton(
-          image: 'assets/images/google_logo.png',
-          onPressed: () {},
-        ),
-        _buildLogoButton(
-          image: 'assets/images/apple_logo.png',
-          onPressed: () {},
-        ),
-        _buildLogoButton(
-          image: 'assets/images/facebook_logo.png',
-          onPressed: () {},
-        )
-      ],
-    );
-  }
-
-  Widget _buildSignUpQuestion() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Text(
-          "Don't have an Account? ",
-          style: TextStyle(
-            fontFamily: 'PT-Sans',
-            fontSize: 16,
-            color: Colors.white,
-          ),
-        ),
-        InkWell(
-          child: const Text(
-            'Sign Up',
-            style: TextStyle(
-              fontFamily: 'PT-Sans',
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-          onTap: () {},
-        ),
-      ],
-    );
+  Future<ParseUser?> getUser() async {
+    currentUser = await ParseUser.currentUser() as ParseUser?;
+    return currentUser;
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: Container(
-          width: double.infinity,
-          height: double.infinity,
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Color(0xFFF99E1E),
-                Color(0xFFF99E1E),
-                Color(0xFFF99E1E),
-                Color(0xFFF99E1E),
-                Color(0xFFF99E1E),
-              ],
-            ),
-          ),
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 40,
-              ).copyWith(top: 60),
-              child: Column(
-                children: [
-                  const Text(
-                    'Sign In',
-                    style: TextStyle(
-                      fontFamily: 'PT-Sans',
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    child: const Text(
-                      'Email',
-                      style: TextStyle(
-                        fontFamily: 'PT-Sans',
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  _buildTextField(
-                    hintText: 'Enter your email',
-                    obscureText: false,
-                    prefixedIcon: const Icon(Icons.mail, color: Colors.white),
-                  ),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    child: const Text(
-                      'Password',
-                      style: TextStyle(
-                        fontFamily: 'PT-Sans',
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  _buildTextField(
-                    hintText: 'Enter your password',
-                    obscureText: true,
-                    prefixedIcon: const Icon(Icons.lock, color: Colors.white),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  _buildForgotPasswordButton(),
-                  _buildRemeberMe(),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  _buildLoginButton(),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  const Text(
-                    '- OR -',
-                    style: TextStyle(
-                      fontFamily: 'PT-Sans',
-                      fontSize: 16,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  const Text(
-                    'Sign in with',
-                    style: TextStyle(
-                      fontFamily: 'PT-Sans',
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  _buildSocialButtons(),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  _buildSignUpQuestion()
-                ],
-              ),
-            ),
-          ),
+    void doUserLogout() async {
+      var response = await currentUser!.logout();
+      if (response.success) {
+        Message.showSuccess(
+            context: context,
+            message: 'User was successfully logout!',
+            onPressed: () {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => LoginPage()),
+                (Route<dynamic> route) => false,
+              );
+            });
+      } else {
+        Message.showError(context: context, message: response.error!.message);
+      }
+    }
+
+    return Scaffold(
+        appBar: AppBar(
+          title: Text('User logged in - Current User'),
         ),
-      ),
+        body: FutureBuilder<ParseUser?>(
+            future: getUser(),
+            builder: (context, snapshot) {
+              switch (snapshot.connectionState) {
+                case ConnectionState.none:
+                case ConnectionState.waiting:
+                  return Center(
+                    child: Container(
+                        width: 100,
+                        height: 100,
+                        child: CircularProgressIndicator()),
+                  );
+                default:
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Center(
+                            child: Text('Hello, ${snapshot.data!.username}')),
+                        SizedBox(
+                          height: 16,
+                        ),
+                        Container(
+                          height: 50,
+                          child: ElevatedButton(
+                            child: const Text('Logout'),
+                            onPressed: () => doUserLogout(),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+              }
+            }));
+  }
+}
+
+class ResetPasswordPage extends StatefulWidget {
+  @override
+  _ResetPasswordPageState createState() => _ResetPasswordPageState();
+}
+
+class _ResetPasswordPageState extends State<ResetPasswordPage> {
+  final controllerEmail = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: Text('Reset Password'),
+        ),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              TextField(
+                controller: controllerEmail,
+                keyboardType: TextInputType.emailAddress,
+                textCapitalization: TextCapitalization.none,
+                autocorrect: false,
+                decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black)),
+                    labelText: 'E-mail'),
+              ),
+              SizedBox(
+                height: 8,
+              ),
+              Container(
+                height: 50,
+                child: ElevatedButton(
+                  child: const Text('Reset Password'),
+                  onPressed: () => doUserResetPassword(),
+                ),
+              )
+            ],
+          ),
+        ));
+  }
+
+  void doUserResetPassword() async {}
+}
+
+class Message {
+  static void showSuccess(
+      {required BuildContext context,
+      required String message,
+      VoidCallback? onPressed}) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Success!"),
+          content: Text(message),
+          actions: <Widget>[
+            new ElevatedButton(
+              child: const Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop();
+                if (onPressed != null) {
+                  onPressed();
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  static void showError(
+      {required BuildContext context,
+      required String message,
+      VoidCallback? onPressed}) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Error!"),
+          content: Text(message),
+          actions: <Widget>[
+            new ElevatedButton(
+              child: const Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop();
+                if (onPressed != null) {
+                  onPressed();
+                }
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }
