@@ -13,7 +13,7 @@ class _HomePageState extends State<HomePage> {
   TextEditingController _contentController = TextEditingController();
 
   String dropdownValue = 'Donate';
-
+  
   @override
   void initState() {
     super.initState();
@@ -31,6 +31,76 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  Future<void> deletePost(ParseObject post) async {
+  final response = await post.delete();
+  if (response.success) {
+    setState(() {
+      posts.remove(post);
+    });
+  } else {
+    print('Error deleting post: ${response.error!.message}');
+  }
+}
+
+Future<String> getUserName() async {
+  ParseUser? currentUser = await ParseUser.currentUser();
+  String? username = currentUser!.username;
+  return username ?? ""; // return an empty string if username is null
+}
+
+  void _showPostDetails(ParseObject post) {
+    // Future<String> username = getUserName();
+    // String? username = await getUserName();
+    String username;
+    bool usernameCheck = false;
+    getUserName().then((String? username) {
+    if(post.get<String>('username') == username){usernameCheck = true;}
+    print(username);
+
+
+  });
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          
+          title: Text(post.get<String>('title') ?? ''),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(post.get<String>('content') ?? ''),
+                Text('Type: ${post.get<String>('type') ?? ''}'),
+                Text('User Name: ${post.get<String>('username') ?? ''}'),
+                Text('Email: ${post.get<String>('email') ?? ''}'),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Close'),
+            ),
+            
+            // if (post.get<String>('username') == username)
+                // ParseUser.currentUser().get<String>('username'))
+              if(usernameCheck)
+              TextButton(
+                onPressed: () async {
+                  await deletePost(post);
+                  Navigator.of(context).pop();
+                },
+                child: Text('Delete'),
+              ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,20 +113,42 @@ class _HomePageState extends State<HomePage> {
             child: ListView.builder(
               itemCount: posts.length,
               itemBuilder: (BuildContext context, int index) {
-                return Card(
-                  child: ListTile(
-                    title: Text(posts[index].get<String>('title') ?? ''),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(posts[index].get<String>('content') ?? ''),
-                        Text('Type: ${posts[index].get<String>('type') ?? ''}'),
-                        Text('User Name: ${posts[index].get<String>('username') ?? ''}')
-                      ],
+                return GestureDetector(
+                  onTap: () => _showPostDetails(posts[index]),
+                  child: Card(
+                    child: ListTile(
+                      title: Text(posts[index].get<String>('title') ?? ''),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(posts[index].get<String>('content') ?? ''),
+                          Text(
+                              'Type: ${posts[index].get<String>('type') ?? ''}'),
+                          Text(
+                              'User Name: ${posts[index].get<String>('username') ?? ''}')
+                        ],
+                      ),
                     ),
                   ),
                 );
               },
+
+              // itemCount: posts.length,
+              // itemBuilder: (BuildContext context, int index) {
+              //   return Card(
+              //     child: ListTile(
+              //       title: Text(posts[index].get<String>('title') ?? ''),
+              //       subtitle: Column(
+              //         crossAxisAlignment: CrossAxisAlignment.start,
+              //         children: [
+              //           Text(posts[index].get<String>('content') ?? ''),
+              //           Text('Type: ${posts[index].get<String>('type') ?? ''}'),
+              //           Text('User Name: ${posts[index].get<String>('username') ?? ''}')
+              //         ],
+              //       ),
+              //     ),
+              //   );
+              // },
             ),
           ),
           Padding(
@@ -102,12 +194,13 @@ class _HomePageState extends State<HomePage> {
                       onPressed: () async {
                         ParseUser? currentUser = await ParseUser.currentUser();
                         String? username = currentUser!.username;
-
+                        String? email = currentUser.emailAddress;
                         final parseObject = ParseObject('post')
                           ..set<String>('title', _titleController.text)
                           ..set<String>('content', _contentController.text)
                           ..set<String>('type', dropdownValue)
-                          ..set<String>('username',username ?? ''); 
+                          ..set<String>('username', username ?? '')
+                          ..set<String>('email', email ?? '');
 
                         final response = await parseObject.save();
                         if (response.success) {
