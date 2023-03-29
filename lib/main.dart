@@ -6,6 +6,7 @@ import './post.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 import 'account_screen.dart';
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final keyApplicationId = 'pFwKttmatex3dmiISGFWwrvun2Dw6sYI9v9peWCs';
@@ -90,7 +91,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Flutter - Parse Server'),
+          // title: const Text('Flutter - Parse Server'),
         ),
         body: Center(
           child: SingleChildScrollView(
@@ -99,12 +100,21 @@ class _LoginPageState extends State<LoginPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Container(
-                  height: 200,
-                  child: Image.network(
-                      'https://blog.back4app.com/wp-content/uploads/2017/11/logo-b4a-1-768x175-1.png'),
-                ),
+                    height: 100,
+                     alignment: Alignment.center,
+                    //   child: Image.network(
+                    //       'https://blog.back4app.com/wp-content/uploads/2017/11/logo-b4a-1-768x175-1.png'),
+                    // ),
+                    child: const Text(
+                      'DonAid',
+                      style: TextStyle(
+                        fontSize: 70, // specify the font size in points
+                        fontFamily: 'Arial',
+                        fontWeight: FontWeight.bold // specify the font family
+                      ),
+                    )),
                 Center(
-                  child: const Text('Flutter on Back4App',
+                  child: const Text('',
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 ),
@@ -236,8 +246,10 @@ class _SignUpPageState extends State<SignUpPage> {
               children: [
                 Container(
                   height: 200,
-                  child: Image.network(
-                      'https://blog.back4app.com/wp-content/uploads/2017/11/logo-b4a-1-768x175-1.png'),
+                  //   child: Image.network(
+                  //       'https://blog.back4app.com/wp-content/uploads/2017/11/logo-b4a-1-768x175-1.png'),
+                  // ),
+                  child: const Text('DonAid'),
                 ),
                 Center(
                   child: const Text('Flutter on Back4App',
