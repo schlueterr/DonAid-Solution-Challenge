@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -87,6 +88,20 @@ class _HomePageState extends State<HomePage> {
                             'content': _contentController.text,
                             'type': dropdownValue,
                           });
+                          final parseObject = ParseObject('post')
+                ..set<String>('title', _titleController.text)
+                ..set<String>('content', _contentController.text)
+                ..set<String>('type', dropdownValue);
+
+                parseObject.save().then((response) {
+                  if (response.success) {
+                    print('saved post');
+                  } else {
+                    print('did not save post');// There was a problem, check response.error.message
+                  }
+                });
+
+
                           _titleController.clear();
                           _contentController.clear();
                         });
