@@ -4,6 +4,7 @@ import 'package:flutter_application_1/home_screen.dart';
 import 'package:flutter_application_1/new_homescreen.dart';
 import './post.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
+import 'account_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,6 +40,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      routes: {
+        '/login': (context) => LoginPage(),
+        '/account': (context) => AccountScreen()
+        // other routes
+      },
       title: 'Flutter - Parse Server',
       theme: ThemeData(
         primarySwatch: Colors.blue,
