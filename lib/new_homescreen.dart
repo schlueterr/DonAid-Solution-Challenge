@@ -13,7 +13,7 @@ class _HomePageState extends State<HomePage> {
   TextEditingController _contentController = TextEditingController();
 
   String dropdownValue = 'Donate';
-  
+
   @override
   void initState() {
     super.initState();
@@ -32,21 +32,21 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> deletePost(ParseObject post) async {
-  final response = await post.delete();
-  if (response.success) {
-    setState(() {
-      posts.remove(post);
-    });
-  } else {
-    print('Error deleting post: ${response.error!.message}');
+    final response = await post.delete();
+    if (response.success) {
+      setState(() {
+        posts.remove(post);
+      });
+    } else {
+      print('Error deleting post: ${response.error!.message}');
+    }
   }
-}
 
-Future<String> getUserName() async {
-  ParseUser? currentUser = await ParseUser.currentUser();
-  String? username = currentUser!.username;
-  return username ?? ""; // return an empty string if username is null
-}
+  Future<String> getUserName() async {
+    ParseUser? currentUser = await ParseUser.currentUser();
+    String? username = currentUser!.username;
+    return username ?? ""; // return an empty string if username is null
+  }
 
   void _showPostDetails(ParseObject post) {
     // Future<String> username = getUserName();
@@ -54,17 +54,16 @@ Future<String> getUserName() async {
     String username;
     bool usernameCheck = false;
     getUserName().then((String? username) {
-    if(post.get<String>('username') == username){usernameCheck = true;}
-    print(username);
-
-
-  });
+      if (post.get<String>('username') == username) {
+        usernameCheck = true;
+      }
+      print(username);
+    });
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          
           title: Text(post.get<String>('title') ?? ''),
           content: SingleChildScrollView(
             child: Column(
@@ -84,10 +83,7 @@ Future<String> getUserName() async {
               },
               child: Text('Close'),
             ),
-            
-            // if (post.get<String>('username') == username)
-                // ParseUser.currentUser().get<String>('username'))
-              if(usernameCheck)
+            if (usernameCheck)
               TextButton(
                 onPressed: () async {
                   await deletePost(post);
