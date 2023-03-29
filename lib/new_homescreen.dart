@@ -110,7 +110,8 @@ class _HomePageState extends State<HomePage> {
                             posts.add(parseObject);
                           });
                         } else {
-                          print('Error saving post: ${response.error!.message}');
+                          print(
+                              'Error saving post: ${response.error!.message}');
                         }
 
                         _titleController.clear();
