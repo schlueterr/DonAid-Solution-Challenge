@@ -6,7 +6,6 @@ import './post.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 import 'account_screen.dart';
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final keyApplicationId = 'pFwKttmatex3dmiISGFWwrvun2Dw6sYI9v9peWCs';
@@ -91,8 +90,8 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          // title: const Text('Flutter - Parse Server'),
-        ),
+            // title: const Text('Flutter - Parse Server'),
+            ),
         body: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(8),
@@ -101,17 +100,17 @@ class _LoginPageState extends State<LoginPage> {
               children: [
                 Container(
                     height: 100,
-                     alignment: Alignment.center,
+                    alignment: Alignment.center,
                     //   child: Image.network(
                     //       'https://blog.back4app.com/wp-content/uploads/2017/11/logo-b4a-1-768x175-1.png'),
                     // ),
                     child: const Text(
                       'DonAid',
                       style: TextStyle(
-                        fontSize: 70, // specify the font size in points
-                        fontFamily: 'Arial',
-                        fontWeight: FontWeight.bold // specify the font family
-                      ),
+                          fontSize: 70, // specify the font size in points
+                          fontFamily: 'Arial',
+                          fontWeight: FontWeight.bold // specify the font family
+                          ),
                     )),
                 Center(
                   child: const Text('',
@@ -360,7 +359,7 @@ class UserPage extends StatelessWidget {
       if (response.success) {
         Message.showSuccess(
             context: context,
-            message: 'User was successfully logout!',
+            message: 'User was successfully logged out!',
             onPressed: () {
               Navigator.pushAndRemoveUntil(
                 context,
@@ -398,14 +397,27 @@ class UserPage extends StatelessWidget {
                       children: [
                         Center(
                             child: Text('Hello, ${snapshot.data!.username}')),
-                        SizedBox(
-                          height: 16,
-                        ),
+                        SizedBox(height: 16),
                         Container(
                           height: 50,
                           child: ElevatedButton(
                             child: const Text('Logout'),
                             onPressed: () => doUserLogout(),
+                          ),
+                        ),
+                        SizedBox(height: 16),
+                        Container(
+                          height: 50,
+                          child: ElevatedButton(
+                            child: const Text('Home'),
+                            onPressed: () {
+                              // Navigate to home screen
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => HomeScreen()),
+                              );
+                            },
                           ),
                         ),
                       ],

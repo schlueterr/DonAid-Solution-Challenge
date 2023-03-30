@@ -17,20 +17,26 @@ void _logout(BuildContext context) async {
   }
 }
 
-  @override
+@override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Account'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.logout),
-            onPressed: () => _logout(context),
-          ),
-        ],
       ),
       body: Center(
-        child: Text('This is the account screen'),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('This is the account screen'),
+            SizedBox(
+              height: 16,
+            ),
+            ElevatedButton(
+              child: const Text('Logout'),
+              onPressed: () => _logout(context),
+            ),
+          ],
+        ),
       ),
     );
   }
