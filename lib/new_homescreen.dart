@@ -42,6 +42,12 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  Future<String> returnUserName() async {
+    ParseUser user = await ParseUser.currentUser();
+    String username = user.get<String>('username') ?? '';
+    return username;
+  }
+
   Future<String> getUserName() async {
     ParseUser? currentUser = await ParseUser.currentUser();
     String? username = currentUser!.username;
@@ -100,9 +106,21 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text('Home'),
-      // ),
+      
+      appBar: AppBar(          title: FutureBuilder<String>(
+            future: returnUserName(),
+            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Text('Loading...');
+              } else if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              } else {
+                String username = snapshot.data ?? '';
+                return Text('Welcome, $username');
+              }
+            },
+          ),
+      ),
       body: Column(
         children: [
           Expanded(
