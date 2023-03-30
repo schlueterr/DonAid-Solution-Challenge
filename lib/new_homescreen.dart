@@ -76,7 +76,14 @@ class _HomePageState extends State<HomePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(post.get<String>('content') ?? ''),
-                Text('Type: ${post.get<String>('type') ?? ''}'),
+                Text(
+                  'Type: ${post.get<String>('type') ?? ''}',
+                  style: TextStyle(
+                    color: post.get<String>('type') == 'donate'
+                        ? Colors.red
+                        : Colors.blue,
+                  ),
+                ),
                 Text('User Name: ${post.get<String>('username') ?? ''}'),
                 Text('Email: ${post.get<String>('email') ?? ''}'),
               ],
@@ -106,20 +113,20 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
-      appBar: AppBar(          title: FutureBuilder<String>(
-            future: returnUserName(),
-            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Text('Loading...');
-              } else if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              } else {
-                String username = snapshot.data ?? '';
-                return Text('Welcome, $username');
-              }
-            },
-          ),
+      appBar: AppBar(
+        title: FutureBuilder<String>(
+          future: returnUserName(),
+          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Text('Loading...');
+            } else if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            } else {
+              String username = snapshot.data ?? '';
+              return Text('Welcome, $username');
+            }
+          },
+        ),
       ),
       body: Column(
         children: [
@@ -130,6 +137,9 @@ class _HomePageState extends State<HomePage> {
                 return GestureDetector(
                   onTap: () => _showPostDetails(posts[index]),
                   child: Card(
+                    color: posts[index].get<String>('type') == 'Donate'
+                        ? Colors.red[50]
+                        : Colors.blue[50],
                     child: ListTile(
                       title: Text(posts[index].get<String>('title') ?? ''),
                       subtitle: Column(
@@ -137,7 +147,14 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           Text(posts[index].get<String>('content') ?? ''),
                           Text(
-                              'Type: ${posts[index].get<String>('type') ?? ''}'),
+                            'Type: ${posts[index].get<String>('type') ?? ''}',
+                            style: TextStyle(
+                              color:
+                                  posts[index].get<String>('type') == 'Donate'
+                                      ? Colors.red
+                                      : Colors.blue,
+                            ),
+                          ),
                           Text(
                               'User Name: ${posts[index].get<String>('username') ?? ''}')
                         ],
@@ -146,23 +163,6 @@ class _HomePageState extends State<HomePage> {
                   ),
                 );
               },
-
-              // itemCount: posts.length,
-              // itemBuilder: (BuildContext context, int index) {
-              //   return Card(
-              //     child: ListTile(
-              //       title: Text(posts[index].get<String>('title') ?? ''),
-              //       subtitle: Column(
-              //         crossAxisAlignment: CrossAxisAlignment.start,
-              //         children: [
-              //           Text(posts[index].get<String>('content') ?? ''),
-              //           Text('Type: ${posts[index].get<String>('type') ?? ''}'),
-              //           Text('User Name: ${posts[index].get<String>('username') ?? ''}')
-              //         ],
-              //       ),
-              //     ),
-              //   );
-              // },
             ),
           ),
           Padding(
@@ -174,6 +174,10 @@ class _HomePageState extends State<HomePage> {
                   controller: _titleController,
                   decoration: InputDecoration(
                     hintText: 'Enter a title',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: Colors.blue),
+                    ),
                   ),
                 ),
                 SizedBox(height: 8.0),
@@ -181,6 +185,10 @@ class _HomePageState extends State<HomePage> {
                   controller: _contentController,
                   decoration: InputDecoration(
                     hintText: 'Enter a content',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: Colors.blue),
+                    ),
                   ),
                 ),
                 SizedBox(height: 8.0),
