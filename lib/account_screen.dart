@@ -20,14 +20,12 @@ class AccountScreen extends StatelessWidget {
             Row(
               children: [
                 ElevatedButton(onPressed: () {  },
-                alignment: 
                 child: const Text("Edit"))
               ],),
             Container(  
               margin: const EdgeInsets.all(20.0), 
               alignment: Alignment.centerLeft,  
               child: const Text("Email",style: TextStyle(fontSize:16),), 
-               
             ),  
             Row(
               children: [
