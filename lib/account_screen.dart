@@ -43,11 +43,19 @@
 // }
 
 import 'package:flutter/material.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
 
 class AccountScreen extends StatelessWidget {
  const AccountScreen({Key? key}) : super(key: key);
  
+
+    Future<String> returnUserName() async {
+    ParseUser user = await ParseUser.currentUser();
+    String username = user.get<String>('username') ?? '';
+    return username;
+  }
+
   @override
   Widget build(BuildContext context){
   return Scaffold(
@@ -57,7 +65,7 @@ class AccountScreen extends StatelessWidget {
       body: Column(   
           children:<Widget>[
             Container(  
-              margin: const EdgeInsets.all(20.0), 
+              margin: const EdgeInsets.all(20.0),
               alignment: Alignment.centerLeft, 
               child: const Text("Name",style: TextStyle(fontSize:16),)
             ),  
