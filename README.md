@@ -1,16 +1,21 @@
-# This project is for the Google Solution Challenge 2023
+# DonAid : A simple solution to donations.
 
-A new Flutter project.
+It's cumbersome to donate services or goods. We often have to use a middle man, and are forced to plan weeks or months in advance for a simple donation. With DonAid, a user can immediately recieve, or donate items with a simple press of a button. 
 
-## Getting Started
+## Authors
 
-This project is a starting point for a Flutter application.
+- [Braden Schlueter](https://github.com/schlueterr)
+- [Nestor](https://github.com/n1320447)
+- [Sarath Baswa](https://github.com/sarathbaswa)
+- [Paloma Resendiz](https://github.com/paloma-resendiz)
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Installation
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Install my-project with npm
+
+```bash
+  npm install my-project
+  cd my-project
+```
+    
