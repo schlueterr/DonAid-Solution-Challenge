@@ -101,18 +101,22 @@ class _LoginPageState extends State<LoginPage> {
               children: [
                 Container(
                     height: 100,
-                     alignment: Alignment.center,
+                    alignment: Alignment.center,
                     //   child: Image.network(
                     //       'https://blog.back4app.com/wp-content/uploads/2017/11/logo-b4a-1-768x175-1.png'),
                     // ),
-                    child: const Text(
-                      'DonAid',
-                      style: TextStyle(
-                        fontSize: 70, // specify the font size in points
-                        fontFamily: 'Arial',
-                        fontWeight: FontWeight.bold // specify the font family
+                    child: Image.asset("assets/images/donAid_logo.png",
+                    fit: BoxFit.cover,
+                    ),
+                    
+                   //child: const Text(
+                   //  'DonAid',
+                   //  style: TextStyle(
+                   //    fontSize: 70, // specify the font size in points
+                   //    fontFamily: 'Arial',
+                   //    fontWeight: FontWeight.bold // specify the font family
                       ),
-                    )),
+                   // )),
                 Center(
                   child: const Text('',
                       style:
