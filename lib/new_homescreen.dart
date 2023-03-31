@@ -202,7 +202,7 @@ class _HomePageState extends State<HomePage> {
                             dropdownValue = newValue!;
                           });
                         },
-                        items: <String>['Donate', 'Receive']
+                        items: <String>['Donate', 'Request']
                             .map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
