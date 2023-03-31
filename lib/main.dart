@@ -249,7 +249,7 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Flutter Sign Up'),
+          title: const Text('Sign Up'),
         ),
         body: Center(
           child: SingleChildScrollView(
@@ -258,27 +258,18 @@ class _SignUpPageState extends State<SignUpPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Container(
-                  height: 200,
-                  //   child: Image.network(
-                  //       'https://blog.back4app.com/wp-content/uploads/2017/11/logo-b4a-1-768x175-1.png'),
-                  // ),
-                  child: const Text('DonAid'),
+                  height: 230,
+                  alignment: Alignment.center,
+                  child: Container(
+                    decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage("assets/images/donAid_logo.png"),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  ),
                 ),
-                Center(
-                  child: const Text('Flutter on Back4App',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                ),
-                SizedBox(
-                  height: 16,
-                ),
-                Center(
-                  child: const Text('User registration',
-                      style: TextStyle(fontSize: 16)),
-                ),
-                SizedBox(
-                  height: 16,
-                ),
+                
                 TextField(
                   controller: controllerUsername,
                   keyboardType: TextInputType.text,
