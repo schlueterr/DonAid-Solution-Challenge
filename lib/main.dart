@@ -100,14 +100,24 @@ class _LoginPageState extends State<LoginPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Container(
-                    height: 100,
+                    height: 230,
                     alignment: Alignment.center,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage("assets/images/donAid_logo.png"),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      ),
+
+                    ),
                     //   child: Image.network(
                     //       'https://blog.back4app.com/wp-content/uploads/2017/11/logo-b4a-1-768x175-1.png'),
                     // ),
-                    child: Image.asset("assets/images/donAid_logo.png",
-                    fit: BoxFit.cover,
-                    ),
+                   // child: Image.asset("assets/images/donAid_logo.png",
+                    //fit: BoxFit.cover,
+                  //  ),
                     
                    //child: const Text(
                    //  'DonAid',
@@ -115,7 +125,7 @@ class _LoginPageState extends State<LoginPage> {
                    //    fontSize: 70, // specify the font size in points
                    //    fontFamily: 'Arial',
                    //    fontWeight: FontWeight.bold // specify the font family
-                      ),
+                    //  ),
                    // )),
                 Center(
                   child: const Text('',
