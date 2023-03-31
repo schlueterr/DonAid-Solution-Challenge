@@ -5,7 +5,7 @@ It's cumbersome to donate services or goods. We often have to use a middle man, 
 ## Authors
 
 - [Braden Schlueter](https://github.com/schlueterr)
-- [Nestor](https://github.com/n1320447)
+- [Nestor Govea](https://github.com/n1320447)
 - [Sarath Baswa](https://github.com/sarathbaswa)
 - [Paloma Resendiz](https://github.com/paloma-resendiz)
 
